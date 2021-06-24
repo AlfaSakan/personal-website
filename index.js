@@ -7,8 +7,31 @@ const project3 = document.getElementsByClassName("project3")[0];
 const twitter = document.getElementsByClassName("twitter")[0];
 const linkedin = document.getElementsByClassName("linkedin")[0];
 const cv = document.getElementsByClassName("cv")[0];
-const fb = document.getElementsByClassName("fb")[0];
+const theme = document.getElementsByClassName("theme")[0];
 const contactMe = document.getElementsByClassName("contact-me")[0];
+const toggleMemoji = document.querySelector(".toggle");
+
+toggleMemoji.addEventListener("click", () => {
+  document.querySelector(".memoji2").classList.toggle("invisible");
+  document.querySelector(".memoji3").classList.toggle("invisible");
+  const rotateIcon = document.querySelector(".rotate-icon");
+  const currentRotation = parseInt(getComputedStyle(rotateIcon).getPropertyValue("--rotaion"));
+  rotateIcon.style.setAttribute("--rotation", currentRotation + 180);
+});
+
+const alinks = document.querySelectorAll(".alink");
+
+// alinks.forEach((alink) => {
+//   alink.addEventListener("mouseover", () => {
+//     alink.style.setProperty("border-radius", "10px");
+//     alink.querySelector("span").removeAttribute("hidden");
+//   });
+
+//   alink.addEventListener("mouseout", () => {
+//     alink.querySelector("span").setAttribute("hidden", "");
+//     alink.style.setProperty("border-radius", "100%");
+//   });
+// });
 
 const allSelector = () => {
   opacityFunction();
@@ -28,8 +51,8 @@ const allSelector = () => {
   linkedin.style.gridRowStart = 2;
   cv.style.gridColumnStart = 1;
   cv.style.gridRowStart = 3;
-  fb.style.gridColumnStart = 4;
-  fb.style.gridRowStart = 3;
+  theme.style.gridColumnStart = 4;
+  theme.style.gridRowStart = 3;
   contactMe.style.gridColumnStart = 3;
   contactMe.style.gridRowStart = 4;
 };
@@ -52,8 +75,8 @@ const aboutSelector = () => {
   linkedin.style.gridRowStart = 2;
   cv.style.gridColumnStart = 3;
   cv.style.gridRowStart = 1;
-  fb.style.gridColumnStart = 4;
-  fb.style.gridRowStart = 4;
+  theme.style.gridColumnStart = 4;
+  theme.style.gridRowStart = 4;
   contactMe.style.gridColumnStart = 1;
   contactMe.style.gridRowStart = 4;
 
@@ -82,8 +105,8 @@ const projectsSelector = () => {
   linkedin.style.gridRowStart = 2;
   cv.style.gridColumnStart = 1;
   cv.style.gridRowStart = 3;
-  fb.style.gridColumnStart = 4;
-  fb.style.gridRowStart = 3;
+  theme.style.gridColumnStart = 4;
+  theme.style.gridRowStart = 3;
   contactMe.style.gridColumnStart = 3;
   contactMe.style.gridRowStart = 4;
 
@@ -113,8 +136,8 @@ const contactSelector = () => {
   linkedin.style.gridRowStart = 1;
   cv.style.gridColumnStart = 1;
   cv.style.gridRowStart = 2;
-  fb.style.gridColumnStart = 4;
-  fb.style.gridRowStart = 4;
+  theme.style.gridColumnStart = 4;
+  theme.style.gridRowStart = 4;
   contactMe.style.gridColumnStart = 1;
   contactMe.style.gridRowStart = 1;
 
@@ -135,7 +158,7 @@ const opacityFunction = () => {
 const sunMoonContainer = document.querySelector(".sun-moon-container");
 
 document.querySelector(".theme-toggle-button").addEventListener("click", () => {
-  document.querySelector(".theme").classList.toggle("dark");
+  document.querySelector("body").classList.toggle("dark");
   const currentRotation = parseInt(getComputedStyle(sunMoonContainer).getPropertyValue("--rotation"));
   sunMoonContainer.style.setProperty("--rotation", currentRotation + 180);
 });

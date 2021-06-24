@@ -5,18 +5,41 @@
 }
 
 body {
-  background-color: #ddd;
+  --accent-color: orangered;
+  --background-color: white;
+  --text-color: black;
+  --button-text-color: var(--background-color);
+  --transition-delay: 1s;
+  --grid-background-color: #ddd;
+
+  background-color: var(--background-color);
+}
+
+body.dark {
+  --accent-color: #d0d066;
+  --background-color: #171717;
+  --text-color: white;
+  --grid-background-color: #333;
 }
 
 .alink {
   text-decoration: none;
-  color: black;
+  color: var(--background-color);
   font-size: 1rem;
   font-weight: bolder;
-  border-radius: 100%;
+  border-radius: 50%;
   padding: 10px 15px;
-  background-color: white;
+  background-color: var(--accent-color);
   position: absolute;
+  transition: var(--transition-delay);
+}
+
+.alink span {
+  transition: var(--transition-delay);
+}
+
+.alink:hover {
+  opacity: 0.9;
 }
 
 /* * CONTAINER FLEX */
@@ -25,6 +48,8 @@ body {
   padding: 50px 7%;
   display: flex;
   place-content: space-between;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .navbar {
@@ -60,12 +85,19 @@ ul {
 }
 
 .item {
-  background-color: white;
-  /* border: solid 2px black; */
+  background-color: var(--grid-background-color);
+  color: var(--text-color);
   place-content: start;
   place-items: start;
   display: flex;
   border-radius: 20px;
+  transition: var(--transition-delay);
+  transform: scale(1);
+}
+
+.item:hover,
+.item:focus {
+  transform: scale(1.01);
 }
 
 /* *ABOUT ME */
@@ -74,14 +106,22 @@ ul {
   grid-column-end: span 2;
   grid-row-start: 1;
   grid-row-end: span 1;
-  display: block;
   position: relative;
 }
 
-.memoji2 {
+.memoji2,
+.memoji3 {
   width: 100px;
   background: transparent;
   margin: 20px;
+  position: absolute;
+  transform: scale(1);
+  transition: var(--transition-delay);
+}
+
+.invisible {
+  transform: scale(0) rotate(20deg);
+  opacity: 0;
 }
 
 .rotate-icon {
@@ -92,15 +132,25 @@ ul {
 .toggle {
   position: absolute;
   top: 15px;
-  right: 0px;
+  right: 20px;
   padding: 7px 15px;
   border: 2px solid grey;
   border-radius: 18px;
   cursor: pointer;
+  background-color: var(--accent-color);
+  color: var(--button-text-color);
 }
 
-.about-me p {
-  margin: auto 30px;
+.toggle img {
+  --rotation: 0;
+
+  transform: rotate(calc(var(--rotation) * 1deg)) translateZ(0);
+  transition: var(--transition-delay);
+}
+
+.article {
+  margin-top: 30%;
+  margin-left: 50px;
 }
 
 /*  *LOCATION */
@@ -220,6 +270,33 @@ form ul {
   grid-column-end: span 2;
   grid-row-start: 3;
   grid-row-end: span 1;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  border: 10px solid black;
+}
+
+.cv img {
+  width: 20%;
+  margin-top: -50px;
+}
+
+.cv a {
+  position: absolute;
+  bottom: 15px;
+  text-decoration: none;
+  background-color: orangered;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 10px;
+}
+
+.download {
+  left: 150px;
+}
+
+.view {
+  right: 200px;
 }
 
 /* *LINKEDIN */
@@ -265,12 +342,6 @@ form ul {
 
 /* *THEME */
 .theme {
-  --accent-color: orangered;
-  --background-color: white;
-  --text-color: black;
-  --button-text-color: var(--background-color);
-  --transition-delay: 1s;
-
   grid-column-start: 4;
   grid-column-end: span 1;
   grid-row-start: 3;
@@ -281,16 +352,11 @@ form ul {
   align-items: center;
   position: relative;
   overflow: hidden;
+  border: 2px solid #ddd;
 
   transition: var(--transition-delay);
   background-color: var(--background-color);
   color: var(--text-color);
-}
-
-.theme.dark {
-  --accent-color: #d0d066;
-  --background-color: #333;
-  --text-color: white;
 }
 
 .theme-toggle-button {
