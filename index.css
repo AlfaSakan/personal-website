@@ -1,0 +1,360 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #ddd;
+}
+
+.alink {
+  text-decoration: none;
+  color: black;
+  font-size: 1rem;
+  font-weight: bolder;
+  border-radius: 100%;
+  padding: 10px 15px;
+  background-color: white;
+  position: absolute;
+}
+
+/* * CONTAINER FLEX */
+
+.container-flex {
+  padding: 50px 7%;
+  display: flex;
+  place-content: space-between;
+}
+
+.navbar {
+  margin-right: 38%;
+  border: solid;
+  border-radius: 25px;
+}
+
+ul {
+  display: flex;
+  cursor: pointer;
+}
+
+.nav-items {
+  list-style: none;
+  margin: 5px;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+/* *CONTAINER GRID */
+
+.container-grid {
+  display: grid;
+  list-style: none;
+  width: 80%;
+  margin: 10px auto;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 250px);
+  place-items: stretch;
+  gap: 15px;
+  cursor: grab;
+}
+
+.item {
+  background-color: white;
+  /* border: solid 2px black; */
+  place-content: start;
+  place-items: start;
+  display: flex;
+  border-radius: 20px;
+}
+
+/* *ABOUT ME */
+.about-me {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row-start: 1;
+  grid-row-end: span 1;
+  display: block;
+  position: relative;
+}
+
+.memoji2 {
+  width: 100px;
+  background: transparent;
+  margin: 20px;
+}
+
+.rotate-icon {
+  width: 15px;
+  margin-right: 5px;
+}
+
+.toggle {
+  position: absolute;
+  top: 15px;
+  right: 0px;
+  padding: 7px 15px;
+  border: 2px solid grey;
+  border-radius: 18px;
+  cursor: pointer;
+}
+
+.about-me p {
+  margin: auto 30px;
+}
+
+/*  *LOCATION */
+.location {
+  grid-column-start: 3;
+  grid-column-end: span 1;
+  grid-row-start: 1;
+  grid-row-end: span 1;
+  overflow: hidden;
+}
+
+/*  * TODOOLIST PROJECT */
+.project1 {
+  grid-column-start: 4;
+  grid-column-end: span 1;
+  grid-row-start: 1;
+  grid-row-end: span 2;
+  background-image: linear-gradient(35deg, #f6b8b8, #ffed99);
+  overflow: hidden;
+  position: relative;
+}
+
+.todolist-link {
+  left: 15px;
+  bottom: 15px;
+}
+
+.todolist {
+  width: 100%;
+  transform: rotate(-35deg);
+  position: absolute;
+  top: 20%;
+  left: 20%;
+}
+
+/*  *KEEPER PROJECT */
+.project2 {
+  grid-column-start: 3;
+  grid-column-end: span 1;
+  grid-row-start: 2;
+  grid-row-end: span 2;
+  background-image: url("img/keeper-project.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: relative;
+}
+
+.keeper-link {
+  left: 8%;
+  top: 3%;
+}
+
+/* *PROJECT 3 */
+.project3 {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row-start: 4;
+  grid-row-end: span 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #a2dbfa;
+}
+
+.project3-link {
+  left: 15px;
+  bottom: 15px;
+}
+
+.project3 img {
+  width: 100%;
+  z-index: 20;
+}
+
+.project3 h2 {
+  color: #053742;
+  margin-left: 60%;
+  margin-top: 5%;
+}
+
+.circle {
+  padding: 30%;
+  background-color: #f6b8b8;
+  position: absolute;
+  border-radius: 50%;
+  bottom: -50%;
+  right: 30%;
+}
+
+/* *CONTACT ME */
+.contact-me {
+  grid-column-start: 3;
+  grid-column-end: span 2;
+  grid-row-start: 4;
+  grid-row-end: span 1;
+  justify-content: start;
+}
+
+form ul {
+  display: block;
+  list-style: none;
+  margin-left: 40px;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 10px 30px;
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+}
+
+/* *CV */
+.cv {
+  grid-column-start: 1;
+  grid-column-end: span 2;
+  grid-row-start: 3;
+  grid-row-end: span 1;
+}
+
+/* *LINKEDIN */
+.linkedin {
+  grid-column-start: 1;
+  grid-column-end: span 1;
+  grid-row-start: 2;
+  grid-row-end: span 1;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+}
+
+.linkedin img {
+  width: 100%;
+}
+
+.linkedin-link {
+  left: 15px;
+  bottom: 15px;
+}
+
+/*  *TWITTER */
+.twitter {
+  grid-column-start: 2;
+  grid-column-end: span 1;
+  grid-row-start: 2;
+  grid-row-end: span 1;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(95, 204, 255);
+  position: relative;
+}
+
+.twitter img {
+  width: 180px;
+}
+
+.twitter-link {
+  left: 15px;
+  bottom: 15px;
+}
+
+/* *THEME */
+.theme {
+  --accent-color: orangered;
+  --background-color: white;
+  --text-color: black;
+  --button-text-color: var(--background-color);
+  --transition-delay: 1s;
+
+  grid-column-start: 4;
+  grid-column-end: span 1;
+  grid-row-start: 3;
+  grid-row-end: span 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+
+  transition: var(--transition-delay);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.theme.dark {
+  --accent-color: #d0d066;
+  --background-color: #333;
+  --text-color: white;
+}
+
+.theme-toggle-button {
+  background-color: var(--accent-color);
+  color: var(--button-text-color);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border-radius: 0.3em;
+  border: none;
+  outline: none;
+  transition: var(--transition-delay);
+  transform: scale(1);
+}
+
+.theme-toggle-button .icon {
+  margin-right: 0.5em;
+}
+
+.theme-toggle-button:hover,
+.theme-toggle-button:focus {
+  transform: scale(1.1);
+}
+
+.sun-moon-container {
+  --rotation: 0;
+
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  height: 200vmin;
+  pointer-events: none;
+  transform: rotate(calc(var(--rotation) * 1deg));
+  transition: transform var(--transition-delay);
+}
+
+.sun,
+.moon {
+  position: absolute;
+  transition: opacity, fill, var(--transition-delay);
+  width: 30px;
+  height: 30px;
+  fill: var(--accent-color);
+}
+
+.sun {
+  top: 2%;
+}
+
+.dark .sun {
+  opacity: 0;
+}
+
+.moon {
+  bottom: 2%;
+  opacity: 0;
+  transform: rotate(180deg);
+}
+
+.dark .moon {
+  opacity: 1;
+}
