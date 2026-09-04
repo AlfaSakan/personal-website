@@ -3,4 +3,16 @@
   <url>
     <loc>https://alfasakan.github.io/personal-website/</loc>
   </url>
+  <url>
+    <loc>https://alfasakan.github.io/personal-website/blog/hello-world/</loc>
+    <lastmod>2026-09-02</lastmod>
+  </url>
+  <url>
+    <loc>https://alfasakan.github.io/personal-website/blog/rag-is-not-obsolete-and-agents-are-not-magic/</loc>
+    <lastmod>2026-09-04</lastmod>
+  </url>
+  <url>
+    <loc>https://alfasakan.github.io/personal-website/blog/rate-limiter-design-choosing-the-right-algorithm/</loc>
+    <lastmod>2026-09-02</lastmod>
+  </url>
 </urlset>

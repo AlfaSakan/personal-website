@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rate Limiter Design: Choosing the Right Algorithm — A Alfa Sakan</title>
+<meta name="description" content="A comparison of five rate limiting algorithms and where each one breaks down in a distributed system." />
+<link rel="canonical" href="https://alfasakan.github.io/personal-website/blog/rate-limiter-design-choosing-the-right-algorithm/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Rate Limiter Design: Choosing the Right Algorithm" />
+<meta property="og:description" content="A comparison of five rate limiting algorithms and where each one breaks down in a distributed system." />
+<meta property="og:url" content="https://alfasakan.github.io/personal-website/blog/rate-limiter-design-choosing-the-right-algorithm/" />
+<style>
+  body { background:#101010; color:#e6e6e6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; line-height: 1.65; }
+  a { color: #ffc857; }
+  h1 { font-size: 1.9rem; margin-bottom: 0.25rem; }
+  .meta { color: #999; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .tags span { display:inline-block; border:1px solid #333; border-radius:999px; padding:0.1rem 0.7rem; font-size:0.75rem; margin-right:0.4rem; }
+  pre { background:#181818; border:1px solid #2a2a2a; border-radius:8px; padding:1rem; overflow-x:auto; }
+  code { font-family: ui-monospace, monospace; }
+  .back { display:inline-block; margin-bottom:2rem; }
+</style>
+</head>
+<body>
+  <a class="back" href="https://alfasakan.github.io/personal-website/#/blog/rate-limiter-design-choosing-the-right-algorithm">← Back to site</a>
+  <article>
+    <p class="meta">2026-09-02</p>
+    <h1>Rate Limiter Design: Choosing the Right Algorithm</h1>
+    <div class="tags"><span>system-design</span><span>backend</span><span>distributed-systems</span></div>
+    <div class="content"><p>Rate limiting sounds like a solved problem until you have to pick an algorithm and defend the choice. There are five common approaches, and each one trades off memory, accuracy, and burst tolerance differently. Knowing which one to reach for, and why, matters more than knowing that rate limiting exists.</p>
+<h2>Why rate limit at all</h2>
+<p>Three reasons come up in practice. First, protecting against resource starvation from bad actors or runaway clients, the classic DoS case. Second, cost control: fewer servers needed, and a hard requirement when you pay per call to a third-party API for something like credit checks or payment processing. Third, general overload protection against bots or misbehaving clients.</p>
+<p>Client-side throttling is not reliable since a client can be spoofed or bypassed entirely, so the limiter has to sit server-side. In practice that means either baking it into the API server or, more commonly, placing it as middleware in front of the server so it rejects with an HTTP 429 before the request does any real work. In a microservice setup this usually lives in the API gateway, alongside SSL termination, auth, and IP whitelisting.</p>
+<h2>Build it, or buy it</h2>
+<p>The algorithm choice matters, but the bigger decision often comes earlier: build this from scratch or lean on what already exists. Most cloud API gateways ship a rate limiter out of the box, alongside SSL termination, auth, and IP whitelisting, so the practical guidance is to start by evaluating the stack already in place, then let the business requirement pick the algorithm, not the other way around. Building a custom limiter buys full control over the algorithm and its parameters, at the cost of more engineering time; a managed gateway ships faster but constrains which algorithms and tuning knobs are available. For a team validating a product, the managed path is usually the right call. For a platform paying per call to a third-party API for something like credit checks or payment processing, the cost of getting the algorithm wrong is high enough that the extra engineering time to build and tune it precisely is worth spending.</p>
+<h2>The five algorithms</h2>
+<p><strong>Token bucket</strong>, used by Amazon and Stripe, is the default choice. A bucket holds a fixed number of tokens, a refiller adds tokens at a set rate, and each request consumes one. Simple, memory-efficient, and it tolerates short bursts well. The downside is that the two parameters (bucket size, refill rate) are not always intuitive to tune correctly.</p>
+<p>A minimal in-memory implementation in Go, single instance, mutex-protected:</p>
+<pre><code class="language-go">type TokenBucket struct {
+	mu         sync.Mutex
+	capacity   int64
+	tokens     int64
+	refillRate int64 // tokens added per second
+	lastRefill time.Time
+}
+
+func NewTokenBucket(capacity, refillRate int64) *TokenBucket {
+	return &amp;TokenBucket{
+		capacity:   capacity,
+		tokens:     capacity,
+		refillRate: refillRate,
+		lastRefill: time.Now(),
+	}
+}
+
+func (b *TokenBucket) Allow() bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	elapsed := time.Since(b.lastRefill).Seconds()
+	if refill := int64(elapsed * float64(b.refillRate)); refill &gt; 0 {
+		b.tokens = min(b.capacity, b.tokens+refill)
+		b.lastRefill = time.Now()
+	}
+
+	if b.tokens == 0 {
+		return false
+	}
+	b.tokens--
+	return true
+}
+</code></pre>
+<p>The middleware just calls <code>Allow()</code> per request and returns 429 on <code>false</code>. The catch, and the reason the distributed section below matters, is that this version only works within a single process. A <code>sync.Mutex</code> and an in-memory struct do not survive across multiple rate limiter instances, which is exactly the synchronization issue described next.</p>
+<p><strong>Leaking bucket</strong>, used by Shopify, processes requests at a fixed outflow rate through a FIFO queue. It gives you a stable, predictable processing rate, which is valuable when downstream systems need steady load. The tradeoff is that a burst fills the queue with old requests and delays anything new, and like token bucket it needs careful parameter tuning.</p>
+<p><strong>Fixed window counter</strong> divides time into fixed windows, each with its own counter. It is easy to reason about and cheap to store, but it has a real flaw: the boundary burst problem. A limit of 5 requests per minute can let through nearly double that if traffic clusters at the edge between two adjacent windows, since each window resets independently.</p>
+<p><strong>Sliding window log</strong>, typically backed by a Redis sorted set, stores a timestamp per request and counts how many fall inside the current rolling window. It is the most accurate of the five, never exceeding the limit in any rolling window, but it pays for that accuracy in memory, since even rejected requests can end up logged.</p>
+<p><strong>Sliding window counter</strong> is a hybrid that approximates the sliding log using fixed window counts. It weights the previous window&#39;s count by the overlap percentage with the current window: for a limit of 7 requests per minute, 5 requests in the prior minute, 3 in the current minute so far, and 30% into the current window, the estimate is <code>3 + 5 x 0.7 = 6.5</code>, rounded down to 6, which is still under the limit. It is only an approximation, not exact, but Cloudflare&#39;s own experiment found just 0.003% of requests misclassified across 400 million, which is good enough for most production use.</p>
+<h2>What breaks in a distributed system</h2>
+<p>Two problems show up once you have more than one rate limiter instance:</p>
+<p>Race conditions happen when concurrent requests read a counter before either writes back, causing undercounting. Locking is the obvious fix but slows things down; a Lua script executed atomically in Redis, or a Redis sorted set, avoids the lock while staying correct.</p>
+<p>Synchronization is the other issue: with multiple stateless rate limiter instances, requests from the same client can land on different instances that do not share state. Sticky sessions are a tempting fix but do not scale well. A centralized store like Redis, shared across all instances, is the more robust answer.</p>
+<h2>Implementation notes that matter</h2>
+<p>Redis is the standard choice for the counter store, using <code>INCR</code> to bump the count and <code>EXPIRE</code> to auto-clear it after the window closes, since an in-memory cache is far faster than hitting a database on every request. Respond to clients with <code>X-Ratelimit-Remaining</code>, <code>X-Ratelimit-Limit</code>, and <code>X-Ratelimit-Retry-After</code> headers so well-behaved clients can back off on their own before hitting a wall.</p>
+<p>On the monitoring side, treat the rate limiter as a system that needs tuning over time, not a fire-and-forget config. If legitimate requests are getting rejected too often, loosen the rules. If traffic has a real burst pattern, like a flash sale, token bucket&#39;s burst tolerance is usually a better fit than a strict fixed window.</p>
+<p>The deeper lesson here is one that generalizes past rate limiting: the &quot;correct&quot; algorithm depends entirely on which tradeoff you can afford, accuracy versus memory, burst tolerance versus predictability. Five algorithms exist because five different sets of constraints exist, not because four of them are wrong.</p>
+</div>
+  </article>
+</body>
+</html>
