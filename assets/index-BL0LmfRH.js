@@ -181,6 +181,12 @@ That validation gate is the entire difference between an agent that occasionally
 
 There is a real tradeoff in how granular a plan should be. A plan that names exact function calls is precise but brittle against any API change. A plan written in natural language survives change better but needs a separate translation step before it can actually run. Neither is strictly better, it depends on how often the underlying tools change.
 
+## What this costs, and where the risk sits
+
+For a team deciding whether to build a RAG or agent system, two numbers matter more than the architecture diagram. First, embedding-based retrieval is not free: dense search alone can eat 20 to 50 percent of a company's model API spend, which makes hybrid search, sparse first, embeddings only where they earn their cost, a cost decision as much as a technical one. Second, every agent step with a write action, sending an email, executing a database write, moving money, is not equivalent in risk to a read-only lookup, and that gap should show up in how much validation and human oversight gets built around it, not just in the prompt.
+
+The build-vs-buy question follows a similar logic. LangChain, Haystack, and Semantic Kernel solve overlapping problems with different tradeoffs: Haystack ships a REST API deployment path out of the box, LangChain and Semantic Kernel do not, which matters if the goal is shipping a standalone service quickly versus embedding retrieval into an existing application. The safer default across all of this: reach for the simplest architecture that closes the task, hardcoded sequential chains where order needs to be exact and easy to test, agentic tool selection only where the flexibility is actually needed. Complexity added ahead of the requirement becomes a debugging cost later, not a capability now.
+
 ## What this means in practice
 
 When evaluating whether a RAG or agent system is production-ready, the useful questions are not "does it work on the demo" but "what is the compound error rate over the expected number of steps" and "is there a validation gate before anything with side effects executes." Most agent failures trace back to one of three categories: bad planning (wrong tool, wrong parameters, goal not actually met), tool failure (right call, wrong output), or inefficiency (too many steps, too expensive). Naming which category a failure falls into is usually more useful than trying to fix it by upgrading the model.
@@ -200,6 +206,10 @@ Rate limiting sounds like a solved problem until you have to pick an algorithm a
 Three reasons come up in practice. First, protecting against resource starvation from bad actors or runaway clients, the classic DoS case. Second, cost control: fewer servers needed, and a hard requirement when you pay per call to a third-party API for something like credit checks or payment processing. Third, general overload protection against bots or misbehaving clients.
 
 Client-side throttling is not reliable since a client can be spoofed or bypassed entirely, so the limiter has to sit server-side. In practice that means either baking it into the API server or, more commonly, placing it as middleware in front of the server so it rejects with an HTTP 429 before the request does any real work. In a microservice setup this usually lives in the API gateway, alongside SSL termination, auth, and IP whitelisting.
+
+## Build it, or buy it
+
+The algorithm choice matters, but the bigger decision often comes earlier: build this from scratch or lean on what already exists. Most cloud API gateways ship a rate limiter out of the box, alongside SSL termination, auth, and IP whitelisting, so the practical guidance is to start by evaluating the stack already in place, then let the business requirement pick the algorithm, not the other way around. Building a custom limiter buys full control over the algorithm and its parameters, at the cost of more engineering time; a managed gateway ships faster but constrains which algorithms and tuning knobs are available. For a team validating a product, the managed path is usually the right call. For a platform paying per call to a third-party API for something like credit checks or payment processing, the cost of getting the algorithm wrong is high enough that the extra engineering time to build and tune it precisely is worth spending.
 
 ## The five algorithms
 
