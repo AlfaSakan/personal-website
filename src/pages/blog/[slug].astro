@@ -1,0 +1,57 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+};
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const base = import.meta.env.BASE_URL;
+const date = post.data.date.toISOString().slice(0, 10);
+---
+
+<BaseLayout
+  title={`${post.data.title} — A Alfa Sakan`}
+  description={post.data.excerpt}
+  path={`blog/${post.id}`}
+  ogType="article"
+>
+  <article class="py-10 px-8">
+    <a
+      href={`${base}blog/`}
+      class="text-orange-yellow-crayola hover:text-light-gray-70 transition-colors"
+    >
+      ← Back
+    </a>
+
+    <p class="text-sm text-light-gray-70 mt-6">{date}</p>
+    <h1 class="text-3xl font-bold mt-2">{post.data.title}</h1>
+    {
+      post.data.tags.length > 0 && (
+        <div class="flex items-center gap-2 mt-4">
+          {post.data.tags.map((tag) => (
+            <span class="border-jet border rounded-full text-xs px-3 py-0.5">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )
+    }
+    <div class="h-1.5 w-10 rounded-full bg-orange-yellow-crayola my-6"></div>
+    <div class="prose-blog">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const formatDate = (date: Date) => date.toISOString().slice(0, 10);
+---
+
+<BaseLayout
+  title="Blog — A Alfa Sakan"
+  description="Notes by A Alfa Sakan on AI engineering, systems design, and things picked up while building side projects."
+  path="blog"
+>
+  <div class="py-10 px-8">
+    <h1 class="text-3xl font-bold">Blog</h1>
+    <div class="h-1.5 w-10 rounded-full bg-orange-yellow-crayola my-5"></div>
+
+    {
+      posts.length === 0 ? (
+        <p class="text-light-gray">No posts yet. Check back soon.</p>
+      ) : (
+        <div class="flex flex-col gap-4">
+          {posts.map((post) => (
+            <a
+              href={`${base}blog/${post.id}/`}
+              class="p-0.5 rounded-xl bg-gradient-to-br to-white/0 from-[#404040] to-50% from-0% block"
+            >
+              <div class="bg-eerie-black-1 py-5 px-6 rounded-xl">
+                <p class="text-sm text-light-gray-70">
+                  {formatDate(post.data.date)}
+                </p>
+                <h2 class="text-white-2 font-bold text-xl mt-1">
+                  {post.data.title}
+                </h2>
+                <p class="text-light-gray mt-2">{post.data.excerpt}</p>
+                {post.data.tags.length > 0 && (
+                  <div class="flex items-center gap-2 mt-3">
+                    {post.data.tags.map((tag) => (
+                      <span class="border-jet border rounded-full text-xs px-3 py-0.5">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

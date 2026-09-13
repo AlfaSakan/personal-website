@@ -1,0 +1,158 @@
+---
+import Sidebar from "../components/Sidebar";
+import "../index.css";
+
+export const SITE_URL = "https://alfasakan.github.io/personal-website";
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string;
+  ogType?: "website" | "article";
+}
+
+const { title, description, path = "", ogType = "website" } = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const canonical = `${SITE_URL}/${path ? `${path}/` : ""}`;
+const ogImage = `${SITE_URL}/og-cover.png`;
+
+const navItems = [
+  { label: "About", path: "" },
+  { label: "Resume", path: "resume" },
+  { label: "Projects", path: "projects" },
+  { label: "Contact", path: "contact" },
+  { label: "Blog", path: "blog" },
+];
+
+const currentPath = Astro.url.pathname
+  .replace(base, "")
+  .replace(/^\/+|\/+$/g, "");
+
+function isActive(itemPath: string) {
+  if (itemPath === "") return currentPath === "";
+  return currentPath === itemPath || currentPath.startsWith(`${itemPath}/`);
+}
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href={`${base}my-avatar.png`} />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {
+      path === "" && (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "A Alfa Sakan",
+            jobTitle: "Software Engineer",
+            email: "mailto:alfasakan11@gmail.com",
+            telephone: "+6281357911952",
+            url: `${SITE_URL}/`,
+            image: `${SITE_URL}/my-avatar.png`,
+            sameAs: ["https://www.linkedin.com/in/alfasakan/"],
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Pekalongan",
+              addressCountry: "ID",
+            },
+            knowsAbout: [
+              "ReactJs",
+              "NextJs",
+              "Sveltekit",
+              "NodeJs",
+              "Golang",
+              "Docker",
+              "Tailwind",
+              "Java",
+              "ExpressJs",
+              "NestJs",
+              "PostgreSQL",
+              "Redis",
+              "SQLite",
+            ],
+          })}
+        />
+      )
+    }
+  </head>
+  <body>
+    <main
+      class="bg-black text-white min-h-dvh flex items-center justify-center px-4 relative lg:px-0"
+    >
+      <div
+        class="w-full flex flex-col gap-8 py-[5rem] relative lg:max-w-[76rem] lg:flex-row"
+      >
+        <Sidebar />
+
+        <div
+          class="bg-eerie-black-2 border-jet border rounded-2xl grow relative overflow-hidden"
+        >
+          <nav
+            class="flex items-center gap-8 px-8 py-5 absolute right-0 top-0 bg-[rgba(43,43,44,0.75)] rounded-tr-2xl rounded-bl-2xl max-md:hidden z-10"
+          >
+            {
+              navItems.map((item) => (
+                <a
+                  href={`${base}${item.path ? `${item.path}/` : ""}`}
+                  class:list={[
+                    "font-semibold transition-colors duration-300",
+                    isActive(item.path)
+                      ? "text-orange-yellow-crayola"
+                      : "text-light-gray hover:text-light-gray-70",
+                  ]}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+
+          <slot />
+        </div>
+      </div>
+
+      <nav
+        class="flex items-center gap-8 px-8 py-5 fixed w-screen bottom-0 bg-[rgba(43,43,44,0.75)] rounded-tr-2xl rounded-tl-2xl md:hidden z-10"
+      >
+        {
+          navItems.map((item) => (
+            <a
+              href={`${base}${item.path ? `${item.path}/` : ""}`}
+              class:list={[
+                "font-semibold transition-colors duration-300",
+                isActive(item.path)
+                  ? "text-orange-yellow-crayola"
+                  : "text-light-gray hover:text-light-gray-70",
+              ]}
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </main>
+  </body>
+</html>

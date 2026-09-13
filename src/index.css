@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* 
+--bg-gradient-jet: linear-gradient(
+    to bottom right,
+    hsla(240, 1%, 18%, 0.251) 0%,
+    hsla(240, 2%, 11%, 0) 100%
+  ),
+  hsl(240, 2%, 13%);
+--bg-gradient-yellow-1: linear-gradient(
+  to bottom right,
+  hsl(45, 100%, 71%) 0%,
+  hsla(36, 100%, 69%, 0) 50%
+);
+--bg-gradient-yellow-2: linear-gradient(
+    135deg,
+    hsla(45, 100%, 71%, 0.251) 0%,
+    hsla(35, 100%, 68%, 0) 59.86%
+  ),
+  hsl(240, 2%, 13%);
+--border-gradient-onyx: linear-gradient(
+  to bottom right,
+  hsl(0, 0%, 25%) 0%,
+  hsla(0, 0%, 25%, 0) 50%
+);
+--text-gradient-yellow: linear-gradient(
+  to right,
+  hsl(45, 100%, 72%),
+  hsl(35, 100%, 68%)
+); */
+
+@theme {
+  --color-jet: hsl(0, 0%, 22%);
+  --color-onyx: hsl(240, 1%, 17%);
+  --color-eerie-black-1: hsl(240, 2%, 13%);
+  --color-eerie-black-2: hsl(240, 2%, 12%);
+  --color-smoky-black: hsl(0, 0%, 7%);
+  --color-white-1: hsl(0, 0%, 100%);
+  --color-white-2: hsl(0, 0%, 98%);
+  --color-orange-yellow-crayola: hsl(45, 100%, 72%);
+  --color-vegas-gold: hsl(45, 100%, 72%);
+  --color-light-gray: hsl(0, 0%, 84%);
+  --color-light-gray-70: hsla(0, 0%, 84%, 0.7);
+  --color-bittersweet-shimmer: hsl(0, 43%, 51%);
+
+  --color-gradient-onyx: linear-gradient(
+    to bottom right,
+    hsl(240, 1%, 25%) 3%,
+    hsl(0, 0%, 19%) 97%
+  );
+  --color-gradient-jet: linear-gradient(
+      to bottom right,
+      hsla(240, 1%, 18%, 0.251) 0%,
+      hsla(240, 2%, 11%, 0) 100%
+    ),
+    hsl(240, 2%, 13%);
+  --color-gradient-yellow-1: linear-gradient(
+    to bottom right,
+    hsl(45, 100%, 71%) 0%,
+    hsla(36, 100%, 69%, 0) 50%
+  );
+  --color-gradient-yellow-2: linear-gradient(
+      135deg,
+      hsla(45, 100%, 71%, 0.251) 0%,
+      hsla(35, 100%, 68%, 0) 59.86%
+    ),
+    hsl(240, 2%, 13%);
+  --color-border-gradient-onyx: linear-gradient(
+    to bottom right,
+    hsl(0, 0%, 25%) 0%,
+    hsla(0, 0%, 25%, 0) 50%
+  );
+  --color-text-gradient-yellow: linear-gradient(
+    to right,
+    hsl(45, 100%, 72%),
+    hsl(35, 100%, 68%)
+  );
+}
+
+@layer components {
+  .prose-blog {
+    color: var(--color-light-gray);
+  }
+  .prose-blog :is(p) {
+    margin-bottom: 1rem;
+    line-height: 1.625;
+  }
+  .prose-blog :is(h2) {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    color: var(--color-white-2);
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-blog :is(h3) {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 700;
+    color: var(--color-white-2);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-blog :is(ul) {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .prose-blog :is(ol) {
+    list-style-type: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .prose-blog :is(ul, ol) > :not(:first-child) {
+    margin-top: 0.25rem;
+  }
+  .prose-blog :is(a) {
+    color: var(--color-orange-yellow-crayola);
+    text-decoration-line: underline;
+  }
+  .prose-blog :is(pre) {
+    background-color: var(--color-smoky-black);
+    border: 1px solid var(--color-jet);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.625;
+  }
+  .prose-blog :is(code) {
+    font-family: var(--font-mono);
+  }
+  .prose-blog :is(p code, li code) {
+    background-color: var(--color-smoky-black);
+    border: 1px solid var(--color-jet);
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.875rem;
+  }
+}
