@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Games from "../components/Games";
+---
+
+<BaseLayout
+  title="Games — A Alfa Sakan"
+  description="Small 2D games by A Alfa Sakan, built to learn game development, each centered on a simple, self-contained story."
+  path="games"
+>
+  <Games client:load />
+</BaseLayout>
