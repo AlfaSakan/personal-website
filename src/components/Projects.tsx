@@ -116,6 +116,14 @@ const projects: Project[] = [
     title: "accbid",
     image: `${import.meta.env.BASE_URL}accbid.webp`,
   },
+  {
+    category: ["web"],
+    description:
+      "Xtools is a multi-tool utility site (JSON formatter, Base64 encode/decode, PDF tools, Markdown previewer, and more), bilingual EN/ID.",
+    href: [{ category: "web", url: "https://xtools.satupa.com" }],
+    title: "Xtools",
+    image: `${import.meta.env.BASE_URL}xtools.png`,
+  },
 ];
 
 const categories: { label: string; value: Project["category"][number] }[] = [
