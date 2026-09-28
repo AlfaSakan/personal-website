@@ -124,15 +124,23 @@ const base = import.meta.env.BASE_URL;
       fit();
     });
 
-    document.addEventListener("keydown", (e) => {
-      // Once the user has clicked into the game, focus (and its keydown
-      // events) belongs to the iframe's own document, not this page — this
-      // guard only covers the moment focus is still on the parent page.
-      if (document.activeElement === iframe) return;
+    const handleFullscreenKey = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) {
         e.preventDefault();
         toggleFullscreen();
       }
+    };
+
+    // Covers the shortcut before the user has clicked into the game.
+    document.addEventListener("keydown", handleFullscreenKey);
+
+    // Once the user clicks into the game, keyboard focus (and its keydown
+    // events) belongs to the iframe's own document and never reaches the
+    // listener above. The iframe is same-origin, so attach the same handler
+    // there too once it's loaded — this is what keeps "F" working while
+    // actually playing.
+    iframe.addEventListener("load", () => {
+      iframe.contentWindow?.document.addEventListener("keydown", handleFullscreenKey);
     });
   }
 </script>
