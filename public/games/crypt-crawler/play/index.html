@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Crypt Crawler</title>
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #1a1a26;
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  <link rel="modulepreload" href="/personal-website/games/crypt-crawler/play/crypt-crawler-10531389338dc7b0.js" crossorigin="anonymous" integrity="sha384-oQ3m9qWepam2QTLAlygKjPHt/8XLs0RqV2bFDo9hb37SABmlaxxvvDtpuYEyOAyN"><link rel="preload" href="/personal-website/games/crypt-crawler/play/crypt-crawler-10531389338dc7b0_bg.wasm" crossorigin="anonymous" integrity="sha384-tHhyPD1E5XvspkubPkO/shZ+8KB+6V5MmRJPTG6TEjpRVSleM0jHfevVwmgm8Gdo" as="fetch" type="application/wasm"></head>
+  <body>
+<script type="module">
+import init, * as bindings from '/personal-website/games/crypt-crawler/play/crypt-crawler-10531389338dc7b0.js';
+const wasm = await init({ module_or_path: '/personal-website/games/crypt-crawler/play/crypt-crawler-10531389338dc7b0_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script></body>
+</html>

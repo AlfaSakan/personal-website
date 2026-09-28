@@ -1,0 +1,5 @@
+Audio assets in this directory (music/dungeon_theme.mp3 and every file under
+sfx/) are procedurally generated in-house with ffmpeg's `sine`/`anoisesrc`
+synth filters (see the generation script used during development). They are
+original work with no external source material, dedicated to the public
+domain / CC0 — free to use, modify, and redistribute without attribution.

@@ -1,0 +1,138 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  title="Crypt Crawler — A Alfa Sakan"
+  description="Crypt Crawler, a 2D ASCII roguelike built in Rust with Bevy and compiled to WebAssembly — playable in the browser."
+  path="games/crypt-crawler"
+>
+  <div class="py-10 px-8">
+    <a
+      href={`${base}games/`}
+      class="text-orange-yellow-crayola hover:text-light-gray-70 transition-colors"
+    >
+      ← Back to Games
+    </a>
+
+    <h1 class="text-3xl font-bold mt-6">Crypt Crawler</h1>
+    <div class="h-1.5 w-10 rounded-full bg-orange-yellow-crayola my-5"></div>
+
+    <div class="flex items-center gap-2 flex-wrap mb-5">
+      {
+        ["Rust", "Bevy", "WASM"].map((tech) => (
+          <span class="border-jet border rounded-full text-xs px-3 py-0.5">
+            {tech}
+          </span>
+        ))
+      }
+    </div>
+
+    <p class="text-sm text-light-gray mb-5">
+      Descend through a procedurally generated crypt, one turn at a time. Move
+      with the <span class="text-white-2">arrow keys</span> and walk into an
+      enemy to attack it. <span class="text-white-2">Q</span> arms a ranged
+      attack and <span class="text-white-2">E</span> arms a dash, once you own
+      them. Clear a floor and pick a reward with <span class="text-white-2"
+        >1</span
+      >–<span class="text-white-2">3</span>, then press <span
+        class="text-white-2">Enter</span
+      > to descend — or to start over after you die.
+    </p>
+
+    <p class="text-sm text-light-gray-70 mb-5">
+      Best played on desktop — the game is keyboard-only. Click inside the game
+      area first to give it keyboard focus and to enable sound. Press
+      <span class="text-white-2">F</span> or use the button below to play fullscreen.
+    </p>
+
+    <div class="flex justify-end mb-2">
+      <button
+        id="fullscreen-btn"
+        type="button"
+        class="text-xs border-jet border rounded-full px-3 py-1 text-light-gray-70 hover:text-orange-yellow-crayola hover:border-orange-yellow-crayola transition-colors"
+      >
+        ⛶ Fullscreen <span class="text-light-gray-70">(F)</span>
+      </button>
+    </div>
+
+    <div class="p-0.5 rounded-xl bg-gradient-to-br to-white/0 from-[#404040] to-50% from-0%">
+      <div class="game-frame rounded-xl bg-eerie-black-1 overflow-hidden">
+        <iframe
+          src={`${base}games/crypt-crawler/play/index.html`}
+          title="Crypt Crawler"
+          allow="autoplay; fullscreen"
+          allowfullscreen
+          loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* The game draws through a fixed-pixel Bevy camera: its 48x28 tile grid plus
+     the HUD above it needs roughly 1280x800 CSS pixels, and a smaller viewport
+     crops the edges rather than scaling them down. So the iframe is always laid
+     out at that native size and visually scaled to whatever width the column
+     gives it (see the script below), keeping the whole board in frame. */
+  .game-frame {
+    aspect-ratio: 1280 / 800;
+  }
+
+  .game-frame iframe {
+    display: block;
+    width: 1280px;
+    height: 800px;
+    border: 0;
+    transform-origin: top left;
+  }
+</style>
+
+<script>
+  const NATIVE_WIDTH = 1280;
+
+  const frame = document.querySelector<HTMLElement>(".game-frame");
+  const iframe = frame?.querySelector("iframe");
+  const fullscreenBtn = document.querySelector<HTMLButtonElement>("#fullscreen-btn");
+
+  if (frame && iframe) {
+    const fit = () => {
+      if (document.fullscreenElement === iframe) return;
+      iframe.style.transform = `scale(${frame.clientWidth / NATIVE_WIDTH})`;
+    };
+
+    fit();
+    new ResizeObserver(fit).observe(frame);
+
+    const toggleFullscreen = () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        iframe.requestFullscreen().catch(() => {});
+      }
+    };
+
+    fullscreenBtn?.addEventListener("click", toggleFullscreen);
+
+    document.addEventListener("fullscreenchange", () => {
+      // The scale transform is only meant for fitting the iframe into the
+      // page column; in fullscreen the browser sizes the element itself, so
+      // a leftover transform would shrink or crop the game.
+      iframe.style.transform = document.fullscreenElement === iframe ? "none" : "";
+      fit();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      // Once the user has clicked into the game, focus (and its keydown
+      // events) belongs to the iframe's own document, not this page — this
+      // guard only covers the moment focus is still on the parent page.
+      if (document.activeElement === iframe) return;
+      if (e.key.toLowerCase() === "f" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+  }
+</script>

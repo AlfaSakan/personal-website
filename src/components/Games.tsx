@@ -17,6 +17,14 @@ const games: Game[] = [
       "A lighthouse keeper's final shift before retirement turns into a race against a storm when the generator fails and ships need light to find their way home.",
     tech: ["Godot", "GDScript"],
   },
+  {
+    title: "Crypt Crawler",
+    status: "completed",
+    story:
+      "A lone crawler descends into a crypt that rearranges itself with every floor, trading blows with whatever still guards it. Each floor survived earns one new power — and one more level between you and daylight.",
+    tech: ["Rust", "Bevy", "WASM"],
+    href: `${import.meta.env.BASE_URL}games/crypt-crawler/`,
+  },
 ];
 
 const statusLabel: Record<Game["status"], string> = {
